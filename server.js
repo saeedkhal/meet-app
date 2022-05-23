@@ -15,10 +15,14 @@ app.get('/:room', (req, res) => {
   res.render('room', { roomId: req.params.room });
 });
 io.on('connection', (socket) => {
+  console.log('user connected');
   socket.on('join-room', (roomId, userId) => {
-    console.log('user connected');
+    console.log('try to join room');
     socket.join(roomId);
     socket.to(roomId).emit('user-connected', userId);
+    socket.on('disconnect', () => {
+      socket.to(roomId).emit('user-disconnect', userId);
+    });
   });
 });
 server.listen(3000, () => {

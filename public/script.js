@@ -26,6 +26,11 @@ navigator.mediaDevices
       call.on('stream', (stream) => {
         addVideoStream(stream, video);
       });
+      peers[call.peer] = call;
+      call.on('close', () => {
+        console.log('close');
+        video.remove();
+      });
     });
   });
 
@@ -34,7 +39,9 @@ myPeer.on('open', (id) => {
 });
 
 socket.on('user-disconnect', (id) => {
+  console.log('id=' + id);
   if (peers[id]) {
+    console.log('userDisConnected');
     peers[id].close();
   }
 });
@@ -47,6 +54,7 @@ function connectToUserId(userId, stream) {
     addVideoStream(stream, userVideo);
   });
   call.on('close', () => {
+    console.log('in close');
     userVideo.remove();
   });
   peers[userId] = call;
